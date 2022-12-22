@@ -125,7 +125,7 @@ const FilterPage = () => {
             {enterResponse?.length > 0 ? (
               <Layout
                 className="site-layout"
-                style={{ padding: "0 24px 24px" }}
+                style={{ padding: "0 24px 24px", marginLeft: "30%" }}
               >
                 <Content
                   style={{
@@ -162,6 +162,7 @@ const FilterPage = () => {
                   alignItems: "center",
                   height: "73vh",
                   marginTop: "100px",
+                  marginLeft: "30%",
                 }}
               />
             )}

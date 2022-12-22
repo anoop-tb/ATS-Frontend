@@ -862,7 +862,7 @@ const Sidenav = ({ handleSubmit }: props) => {
   const onFinish = (value: FormValue) => {
     handleSubmit(value);
 
-    formRef.current!.resetFields();
+    // formRef.current!.resetFields();
   };
 
   const onValuesChange = async (values: any) => {
@@ -873,7 +873,18 @@ const Sidenav = ({ handleSubmit }: props) => {
   };
 
   return (
-    <Sider width={400} style={{ background: colorBgContainer }}>
+    <Sider
+      style={{
+        overflow: "auto",
+        height: "100vh",
+        position: "fixed",
+        left: 0,
+        top: 60,
+        bottom: 0,
+        background: colorBgContainer,
+      }}
+      width={"32%"}
+    >
       <Form
         form={form}
         initialValues={{ remember: true }}
@@ -887,10 +898,7 @@ const Sidenav = ({ handleSubmit }: props) => {
           <UserOutlined className="site-form-item-icon" />
           <span style={{ marginLeft: "5px" }}>Job Role</span>
         </p>
-        <Form.Item
-          name="jobRole"
-          rules={[{ required: true, message: "Please input your password!" }]}
-        >
+        <Form.Item name="jobRole" rules={[{ required: true }]}>
           <Select
             showSearch
             allowClear

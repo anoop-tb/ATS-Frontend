@@ -43,7 +43,10 @@ const Navbar = () => {
   };
 
   return (
-    <Header className="header">
+    <Header
+      style={{ position: "sticky", top: 0, zIndex: 1 }}
+      className="header"
+    >
       <img
         src={accion}
         style={{
