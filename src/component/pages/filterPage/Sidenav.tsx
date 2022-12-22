@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form, Select, SelectProps, Slider, theme, Button } from "antd";
 import Sider from "antd/es/layout/Sider";
 import {
@@ -8,12 +8,13 @@ import {
   FireOutlined,
 } from "@ant-design/icons";
 import type { FormInstance } from "antd/es/form";
+import { ValidateErrorEntity } from "rc-field-form/es/interface";
 
 interface FormValue {
-  experience: number[];
   jobRole: string;
   location: string[];
   skills: string[];
+  experience: number[];
 }
 
 interface props {
@@ -847,6 +848,8 @@ skillsList.forEach((skill) => {
 });
 
 const Sidenav = ({ handleSubmit }: props) => {
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [form] = Form.useForm();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -854,21 +857,31 @@ const Sidenav = ({ handleSubmit }: props) => {
   const formRef = React.createRef<FormInstance>();
 
   const onReset = () => {
-    console.log();
-    // formRef.current!.resetFields();
+    formRef.current!.resetFields();
   };
   const onFinish = (value: FormValue) => {
     handleSubmit(value);
+
     formRef.current!.resetFields();
+  };
+
+  const onValuesChange = async (values: any) => {
+    setIsButtonDisabled(!form.isFieldsTouched(true));
+  };
+  const onFinishFailed = (errorInfo: ValidateErrorEntity) => {
+    setIsButtonDisabled(true);
   };
 
   return (
     <Sider width={400} style={{ background: colorBgContainer }}>
       <Form
+        form={form}
         initialValues={{ remember: true }}
         ref={formRef}
         layout={"vertical"}
         onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        onValuesChange={onValuesChange}
       >
         <p style={{ marginTop: "20px", marginLeft: "10px" }}>
           <UserOutlined className="site-form-item-icon" />
@@ -933,6 +946,7 @@ const Sidenav = ({ handleSubmit }: props) => {
             type="primary"
             htmlType="submit"
             style={{ marginRight: "10px" }}
+            disabled={isButtonDisabled}
           >
             Submit
           </Button>

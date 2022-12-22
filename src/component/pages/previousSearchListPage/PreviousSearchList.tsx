@@ -40,7 +40,7 @@ function PreviousSearchList() {
     const jwtDecode: any = jwt_Decode(jwtToken);
     let id = "014d6842-b5a4-cd8d-8c30-a07991cf141b";
     // let url = `http://192.168.168.50:8000/matchcase_id?id=${id}`
-    let url = `http://192.168.168.50:8000/email_match?email=${jwtDecode.email}`;
+    let url = `https://intranet.accionlabs.com/atsbackend/email_match?email=${jwtDecode.email}`;
     try {
       const response = await fetch(url);
       const json = await response.json();
