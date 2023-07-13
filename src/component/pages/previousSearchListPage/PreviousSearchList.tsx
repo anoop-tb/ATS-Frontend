@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
 import jwt_Decode from "jwt-decode";
 import Cookies from "js-cookie";
+import * as Constants from '../../Constants';
 
 interface DataType {
   key: string;
@@ -40,7 +41,8 @@ function PreviousSearchList() {
     const jwtDecode: any = jwt_Decode(jwtToken);
     let id = "014d6842-b5a4-cd8d-8c30-a07991cf141b";
     // let url = `http://192.168.168.50:8000/matchcase_id?id=${id}`
-    let url = `https://intranet.accionlabs.com/atsbackend/email_match?email=${jwtDecode.email}`;
+    // let url = `https://intranet.accionlabs.com/atsbackend/email_match?email=${jwtDecode.email}`;
+    let url = `${Constants.getPreviousSearchListUrl}?email=${jwtDecode.email}`;
     try {
       const response = await fetch(url);
       const json = await response.json();
@@ -52,7 +54,8 @@ function PreviousSearchList() {
   };
 
   const deletePreviousSearchList = async (key: React.Key) => {
-    let url = `http://192.168.168.50:8000/delete?job_id=${key}`;
+    // let url = `http://192.168.168.50:8000/delete?job_id=${key}`;
+    let url = `${Constants.deletePreviousSearchListUrl}?job_id=${key}`;
     try {
       const response = await fetch(url, { method: "DELETE" });
       const json = await response.json();

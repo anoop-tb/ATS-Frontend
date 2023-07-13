@@ -2,10 +2,9 @@ import React, { Children } from 'react'
 import { useState,useEffect} from 'react'
 import EmployeeCard from '../../pages/employeeList/EmployeeList'
 import {useParams} from 'react-router-dom';
-
+import * as Constants from '../../Constants';
 import {Empty, Layout}  from 'antd'
 import Navbar from '../filterPage/Navbar';
-
 
 const EmployeeList =()=>{
     const [enterEmployeeList,setEmployeeList] = useState<any[]>([])
@@ -14,27 +13,21 @@ const EmployeeList =()=>{
         if(enterEmployeeList.length==0){
             getEmployeeList()
         }
-        
     })
-
     const getEmployeeList = async() =>{
-        let id = params.id
-        
-        let url = `http://192.168.168.50:8000/matchcase_id?id=${id}`
-
+        let id = params.id  
+        // let url = `http://192.168.168.50:8000/matchcase_id?id=${id}`
+        let url = `${Constants.getEmployeeListUrl}?id=${id}`
         try{
             const response = await fetch(url);
             const json = await response.json();
             console.log(json)
             setEmployeeList(json)
-            
-            
         }catch(error){
             console.log("error")
             alert(error)
         }
     }
-
     const toggleSwitch = (id:React.Key) =>{
         const newResponse = [...enterEmployeeList];
         // newResponse.id[id] = 
@@ -45,7 +38,6 @@ const EmployeeList =()=>{
           }
         })
         setEmployeeList(newResponse)
-
       }
     console.log("employeelist running")
     console.log("employee",enterEmployeeList)
@@ -65,5 +57,4 @@ const EmployeeList =()=>{
         </Layout>
     )
 }
-
 export default EmployeeList

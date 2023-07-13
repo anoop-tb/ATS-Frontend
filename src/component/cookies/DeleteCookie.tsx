@@ -1,4 +1,3 @@
-
 import Cookie from 'js-cookie';
 
 interface props{

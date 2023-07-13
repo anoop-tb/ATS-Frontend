@@ -8,5 +8,4 @@ const GetCookie = ({cookiename}: any)=>{
     console.log("jwtname",cookiename)
     return Cookie.get(cookiename)
 }
-
 export default GetCookie
