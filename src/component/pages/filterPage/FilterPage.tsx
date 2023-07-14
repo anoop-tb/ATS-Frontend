@@ -22,31 +22,38 @@ import emailjs from '@emailjs/browser';
 import type { FormInstance } from "antd/es/form";
 import { Link } from 'react-router-dom';
 
-interface FormValue {
+type FormValue = {
   experience: number[];
   jobRole: string;
+  
   location: string[];
   skills: string[];
 }
-interface ToggleItem {
+type ToggleItem = {
   url: string;
 }
 
 const FilterPage = () => {
   let { state } = useLocation();
-  if (!state) {
-    state = {
-      jobRole: "Java",
-    };
-  }
+  // if (!state) {
+  //   state = {
+  //     jobRole: "Java",
+  //   };
+  // }
   const [enterResponse, setResponse] = useState<any[]>([]);
   const [getLoader, setLoader] = useState<boolean>(false);
+  const [jobRoleValue, setJobRole] = useState<string>();
+  const [jobId, setJobId] = useState<string>();
+
 
   const handleSubmit = async (value: FormValue) => {
     setLoader(true);
+   // console.log('job1111',value.jobRole)
+    setJobRole(value.jobRole)
     const jwtToken: any = Cookies.get("atsUser");
     const jwtDecode: any = jwt_Decode(jwtToken);
     const id = uuid();
+    setJobId(id)
     const skilsString = await value.skills.join(",");
     const locationString = await value.location.join(",");
     //const url = `${Constants.filterSubmitUrl}?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
@@ -183,11 +190,10 @@ const FilterPage = () => {
 
   const sendEmail  = (e: FormEvent) => {
     e.preventDefault();
-    var jobRole
     const jwtToken: any = Cookies.get("atsUser");
     const jwtDecode: any = jwt_Decode(jwtToken);
    
-    fetch(`${Constants.massEmail}?job_id=${id}&recipient=${jwtDecode.email}&job_role=${jobRole}`
+    fetch(`${Constants.massEmail}?job_id=${jobId}&recipient=${jwtDecode.email}&job_role=${jobRoleValue}`
       , {
         method: "GET",
         headers: {
@@ -263,7 +269,6 @@ const FilterPage = () => {
                       marginTop: "10px",
                       position: "relative",
                       marginLeft: "3%",
-
                     }}
                   />
                   <ul className="list-container">
