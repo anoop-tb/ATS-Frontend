@@ -1,4 +1,5 @@
 import React, { FormEvent, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Layout, { Content } from "antd/es/layout/layout";
 import Navbar from "./Navbar";
 import Sidenav from "./Sidenav";
@@ -19,6 +20,7 @@ import { Editor } from "@tinymce/tinymce-react";
 import { ToggleButton } from "@mui/material";
 import emailjs from '@emailjs/browser';
 import type { FormInstance } from "antd/es/form";
+import { Link } from 'react-router-dom';
 
 interface FormValue {
   experience: number[];
@@ -26,8 +28,17 @@ interface FormValue {
   location: string[];
   skills: string[];
 }
+interface ToggleItem {
+  url: string;
+}
 
 const FilterPage = () => {
+  let { state } = useLocation();
+  if (!state) {
+    state = {
+      jobRole: "Java",
+    };
+  }
   const [enterResponse, setResponse] = useState<any[]>([]);
   const [getLoader, setLoader] = useState<boolean>(false);
 
@@ -38,10 +49,11 @@ const FilterPage = () => {
     const id = uuid();
     const skilsString = await value.skills.join(",");
     const locationString = await value.location.join(",");
-     //const url = `${Constants.filterSubmitUrl}?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+    //const url = `${Constants.filterSubmitUrl}?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+
     const url = `${Constants.filterSubmitUrl}?job_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
-    
-   // const url = `https://intranet.accionlabs.com/atsbackend/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+
+    // const url = `https://intranet.accionlabs.com/atsbackend/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
     //const url = `https://192.168.168.50:8000/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
 
     try {
@@ -54,6 +66,29 @@ const FilterPage = () => {
       alert(error);
     }
   };
+
+  //BenchProfile
+  const [toggle, setToggle] = useState([])
+  const toggleBench = async (value: FormValue) => {
+    const jwtToken: any = Cookies.get("atsUser");
+    const jwtDecode: any = jwt_Decode(jwtToken);
+    const id = uuid();
+    const skilsString = await value.skills.join(",");
+    const locationString = await value.location.join(",");
+    fetch(`${Constants.benchProfile}?job_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`
+      , {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        setToggle(response);
+      });
+  }
 
   const toggleSwitch = (id: any) => {
     const newResponse = [...enterResponse];
@@ -132,20 +167,6 @@ const FilterPage = () => {
     //setPage(value);
   }
 
-  // popup modal
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const handleCancel = () => {
-    setOpen(false);
-  };
-  const handleOk = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setOpen(false);
-    }, 3000);
-  };
-
   const clearEmail = () => {
     window.location.reload();
   }
@@ -158,111 +179,45 @@ const FilterPage = () => {
   //   fetch(
   //     url,
   //   )
-  // };
-  // const toolbarButtons = [
-  //   "undo",
-  //   "redo",
-  //   "bold",
-  //   "underline",
-  //   "italic",
-  //   "strike",
-  //   "subscript",
-  //   "superscript",
-  //   "font",
-  //   "fontSize",
-  //   "color",
-  //   "hiliteColor",
-  //   "align",
-  //   "list",
-  //   "lineHeight",
-  //   "outdent",
-  //   "indent",
-  //   "image",
-  //   "video",
-  //   "audio",
-  //   "fullScreen",
-  //   "showBlocks",
-  // ];
+  // }; 
 
-  // const mailList = [
-  //   "aakashdeep9830@gmail.com",
-  //   "aakashdeep983@gmail.com"
-  // ];
-
-  const mailList = [
-    "sandeep.ns@accionlabs.com",
-    "anoop.tb@accionlabs.com",
-    "babu.raj@accionlabs.com",
-    "muhammed.samsheer@accionlabs.com",
-    "rakshitha.ts@accionlabs.com",
-  ];
-
-  const [emails, setEmails] = React.useState<string[]>([]);
-  const [focused, setFocused] = React.useState(false);
-
-  const email = 'aakash.deep@accionlabs.com';
-  const encodedEmail = encodeURIComponent(email);
-  const url = `https://formsubmit.co/${encodedEmail}`
- 
-  const sendEmail = (e: FormEvent) => {
-
+  const sendEmail  = (e: FormEvent) => {
     e.preventDefault();
-
-    emailjs.sendForm('service_r16vh17', 'template_ihhtiwj', e.target as HTMLFormElement, 'XFfoPohn7gaHIUGmZ')
-      .then((result) => {
-        console.log(result.text);
-      }, (error) => {
-        console.log(error.text);
+    var jobRole
+    const jwtToken: any = Cookies.get("atsUser");
+    const jwtDecode: any = jwt_Decode(jwtToken);
+   
+    fetch(`${Constants.massEmail}?job_id=${id}&recipient=${jwtDecode.email}&job_role=${jobRole}`
+      , {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        setToggle(response.url);
+        window.open(response.url, '_blank')
       });
   };
 
-//   const express = require("express");
-// const nodemailer = require("nodemailer");
-// const app = express();
-// require("dotenv").config();
-
-//   let transporter = nodemailer.createTransport({
-//     service: "gmail",
-//     auth: {
-//       type: "OAuth2",
-//       user: process.env.EMAIL,
-//       pass: process.env.WORD,
-//       clientId: process.env.OAUTH_CLIENTID,
-//       clientSecret: process.env.OAUTH_CLIENT_SECRET,
-//       refreshToken: process.env.OAUTH_REFRESH_TOKEN,
-//     },
-//    });
-//    transporter.verify((err: Error, success: String) => {
-//     err
-//       ? console.log(err)
-//       : console.log(`=== Server is ready to take messages: ${success} ===`);
-//    });
-//   let mailOptions = {
-//     from: "aakash.deep@accionlabs.com",
-//     to: process.env.EMAIL,
-//     subject: "Nodemailer API",
-//     text: "Hi from your nodemailer API",
-//    };
-//    const sendEmail = (e: FormEvent) => {
-//     e.preventDefault();
-//    transporter.sendMail(mailOptions, function (err : Error, data: String) {
-//     if (err) {
-//       console.log("Error " + err);
-//     } else {
-//       console.log("Email sent successfully");
-//     }
-//    });
-//   }
-// const port = 3001;
-// app.listen(port, () => {
-//  console.log(`Server is running on port: ${port}`);
-// });
+  // const handleOpenUrl = () => {
+  //   const url = `${toggle}`
+  //   window.open(url, '_blank')
+  // }
 
   return (
     <Layout>
       <Navbar />
       <Layout>
-        <Sidenav handleSubmit={handleSubmit} />
+        <Sidenav
+          // { 
+          //   toggle===true &&
+          handleSubmit={handleSubmit}
+        // }
+        />
         {getLoader ? (
           <div className="spinner-align">
             <Spin indicator={antIcon} />
@@ -291,107 +246,14 @@ const FilterPage = () => {
                     >
                       <DownloadOutlined />&nbsp;
                       Download Report
-                    </a></button>                 
+                    </a></button>
 
                   <Button
-                    onClick={() => setOpen(true)} style={{ position: "relative", marginTop: "10px", marginLeft: "4%", height: "30px" }}
+                    onClick={sendEmail} 
+                    style={{ position: "relative", marginTop: "10px", marginLeft: "4%", height: "30px" }}
                   >
                     <SendOutlined />&nbsp;
-                    Send Email</Button>
-                  <Modal
-                    title="Compose Mail"
-                    style={{ top: 20 }}
-                    open={open}
-                    onCancel={handleCancel}
-                    onOk={handleOk}
-                    footer={[
-                      <Button key="back" onClick={handleCancel}>
-                        Cancel
-                      </Button>,
-                      // <Button key="submit" htmlType="submit" form="myForm" type="primary" loading={loading} onClick={handleOk}>
-                      <Button key="submit" htmlType="submit" form="myForm" type="primary" loading={loading} onClick={handleOk}>
-                        Send
-                      </Button>,
-                    ]}
-                  >
-                    {/* <form  encType="multipart/form-data" id="myForm"  action={url} method="POST" >
-                      <input type="hidden" name="email" value="aakash.deep@accionlabs.com"/>
-                      <input type="hidden" name="_footer" value="AccionLabs"/>
-                      <input type="hidden" name="_from" value="aakash.deep@accionlabs.com"/>
-                      <input type="hidden" name="_autoresponse" value="your custom message"></input>
-                      <input type="hidden" name="_cc" value={mailList}/>
-                      <input type="hidden" name="_subject" value="AccionLabs Talent Search!"></input>
-                      <input type="text" name="_honey" style={{display:"none"}}/>       
-                      <input type="hidden" name="_captcha" value="false"/>
-                      <input type="hidden" name="_blacklist" value="spammy pattern, banned term, phrase"/>
-                      <input type="hidden" name="_template" value="table"/>
-                      <div className="form-grouph">
-                        <label htmlFor="subject">Subject :</label>
-                        <input type="text" id="subject" name="Subject" required />
-                      </div>
-                      <div className="form-grouph">
-                        <label htmlFor="body">Body :</label>
-
-                        <SunEditor
-                          setAllPlugins={false}       
-                             
-                          hideToolbar={true}
-                          height="210px" name="Description"
-                          setOptions={{
-                            imageAccept: ".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf",
-                            imageFileInput: true,
-                            imageMultipleFile: true,
-                            buttonList: [
-                              ['undo', 'redo'],
-                              ['bold', 'underline', 'italic', 'list'],
-                              ['table', 'link', 'image'],
-                              ['fullScreen'],
-                            ],
-                          }}
-                        />
-                        <textarea name="Description" contentEditable="true" style={{height:"210px"}}
-                        
-                        />
-                      </div>
-                      <div className="form-grouph">
-                        <label htmlFor="body"><PaperClipOutlined /> Attachment :</label>
-                        <input style={{ border: "none" }}
-                          accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf"
-                          type="file" multiple  name="Attachment" required
-                        /></div>
-                    </form> */}
-
-                     <form
-                      id="myForm" encType="multipart/form-data"
-                      onSubmit={sendEmail}
-                    >
-                       {/* <input  name="_cc"  /> */}
-                       <input type="hidden"  name="_cc"  value={mailList}/>
-                      <div className="form-grouph">
-                        <label>Subject</label>
-                        <input type="hidden" name="email" value="aakash.deep@accionlabs.com"/>
-                        <input type="text" name="subject" required /></div>
-                      <div className="form-grouph">
-                        <label>Description</label>
-                        <SunEditor 
-                          //toolbarButtons={toolbarButtons}
-                          //dangerouslySetInnerHTML={{ __html: "<h1>Hi there!</h1>" }}
-                          
-                          setAllPlugins={false}
-                          hideToolbar={true} 
-                          height="210px" name="message" 
-                        />
-                         {/* <textarea name="message" contentEditable="true" style={{height:"210px"}}/> */}
-                        {/* <div className="form-grouph">
-                        <label htmlFor="body"><PaperClipOutlined /> Attachment :</label>
-                        <input style={{ border: "none" }}
-                          accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf"
-                          type="file" multiple  name="Attachment" required
-                        /></div> */}
-                      </div>
-                    </form>
-                    
-                  </Modal>&nbsp;&nbsp;
+                    Send Email</Button>&nbsp;&nbsp;
                   <Select
                     placeholder="Sort by Experience and Score"
                     options={sortOption}

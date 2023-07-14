@@ -1009,7 +1009,7 @@ const Sidenav = ({ handleSubmit }: props) => {
           <span style={{ marginLeft: "5px" }}>Internal Data</span>
         </p>
         <Form name="bench">
-        <Switch onChange={onChange} style={{marginLeft:"35px"}}/>
+        <Switch id="benchProfile" onChange={onChange} style={{marginLeft:"35px"}}/>
         </Form>
         <Form.Item style={{ float: "right", marginRight: "15px" }}>
           <Button

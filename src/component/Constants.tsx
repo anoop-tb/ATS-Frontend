@@ -31,3 +31,11 @@ export const getEmailLoginValidateUrl=`${URL}/ta_email`
 //Blocking Resume
 
 export const blockingResumeUrl =`${URL}/blocking_resume`
+
+//bench profile
+
+export const benchProfile = `${URL}/bench_profile` 
+
+//Mass Email
+
+export const massEmail= `${URL}/mass-email`
