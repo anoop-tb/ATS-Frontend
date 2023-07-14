@@ -10,9 +10,6 @@ import {
   UserOutlined,
   PhoneOutlined, BulbOutlined, MinusCircleOutlined, InfoCircleOutlined
 } from "@ant-design/icons";
-//import { useReactCountdown } from "use-react-countdown"
-//import Countdown from 'react-countdown';
-//import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 //@ts-ignore
 import useCountdown from 'react-use-countdown';
 import parseMs from 'parse-ms'
@@ -82,30 +79,31 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
   //  alert(file_created)
   //  2022-11-18 20:53:12
   // 16-Sep-1996
- // {new Date(file_created).toLocaleDateString()}
+  // {new Date(file_created).toLocaleDateString()}
 
 
   const cardDated = (file_created: Date, currentDate: Date) => {
     // alert(currentDate)
-   // alert(file_created.getMonth())
+    // alert(file_created.getMonth())
     return currentDate.getMonth() - file_created.getMonth() +
       (12 * (currentDate.getFullYear() - file_created.getFullYear()))
   }
   var monthCount = cardDated(new Date(2022, 1), new Date())
   console.log(monthCount)
-  //alert(monthCount)
+  // alert(monthCount)
   //console.log(file_created.toLocaleTimeString());
 
   if (monthCount <= 1) {
-    bgColor = "#f9cb9c"  //green
+    bgColor = "#d9ead3"  //green
     // #d9ead3
   }
   else if (monthCount >= 2 && monthCount <= 5) {
-    bgColor = "#f9cb9c"   //orange
+    bgColor = "#fff2cc"  //yellow
+    // #fff2cc
   }
   else if (monthCount >= 6) {
-    bgColor = "#f9cb9c"  //yellow
-    // #fff2cc
+    bgColor = "#f9cb9c"   //orange
+    //#f9cb9c
   }
   const [active, setActive] = useState(false);
   const handleClickk = () => {
@@ -179,10 +177,6 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
   };
   var endDate = new Date(72)
   endDate.setDate(endDate.getDate() + 2)
-  // const { days, hours, minutes, seconds } = CountdownCircleTimer(endDate)
-
-  // Random component
-  // const Completionist = () => <span>You are good to go!</span>
   const countdown = useCountdown(() => Date.now() + 10000)
   const { days, hours, minutes, seconds } = parseMs(countdown)
 
@@ -234,9 +228,7 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
                   loading={loading}
                   //  onClick={handleOk}
                   onClick={(e) => handleClick(e)}
-
                 >
-
                   Block
                 </Button>,
 
@@ -245,26 +237,22 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
               <Form id="myForm"
               // onSubmit={handleClick}
               >
-                {/* <div className="form-grouph">
-                      <label>Email</label>
-                      <input type="text" value={ta_email} name="subject" required /></div> */}
                 <div className="form-grouph">
                   <label>Project Name</label>
                   <input type="text" name="blocked_project" onChange={handleBlur} required /></div>
                 <div className="form-grouph">
                   <label>Time Duration</label>
                   <div className="slidecontainer">
-                    <input name="blocked_time" onChange={handleBlur} type="range" min="1" max="72" step="1" style={{ width: "100%" }} id="myRange" required />
+                    {/* <input name="blocked_time" onChange={handleBlur} type="range" min="1" max="72" step="1" style={{ width: "100%" }} id="myRange" required /> */}
                     {/* <Slider onChange={(e) => console.log('value is: ', e)} max={72} min={1} id="myRange" /> */}
-                    {/* <Form.Item name="blocked_time"   onChange={handleBlur}  rules={[{ required: true }]}>
-          <Slider
-        
-            range
-            min={1}
-            max={72}
-         
-          />
-        </Form.Item> */}
+                    <Form.Item name="blocked_time" rules={[{ required: true }]}>
+                      <Slider
+                        range
+                        min={1}
+                        max={72}
+
+                      />
+                    </Form.Item>
                   </div>
 
                   <div className="form-grouph">
@@ -353,5 +341,4 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
     </li>
   );
 };
-
 export default EmployeeCard;
