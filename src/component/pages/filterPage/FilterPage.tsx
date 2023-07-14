@@ -1,4 +1,5 @@
-import { useState } from "react";
+import React, { FormEvent, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Layout, { Content } from "antd/es/layout/layout";
 import Navbar from "./Navbar";
 import Sidenav from "./Sidenav";
@@ -6,29 +7,61 @@ import EmployeeCard from "./EmployeeCard";
 import uuid from "react-uuid";
 import jwt_Decode from "jwt-decode";
 import Cookies from "js-cookie";
+import { DownloadOutlined, SendOutlined, PaperClipOutlined, LoadingOutlined } from "@ant-design/icons";
+import { Empty, Select, Spin, Form, Button, Modal } from "antd";
+import { display } from "@mui/system";
+import Pagination from "@mui/material/Pagination";
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css';
+import * as Constants from '../../Constants';
+import { ReactMultiEmail, isEmail } from 'react-multi-email';
+import 'react-multi-email/dist/style.css';
+import { Editor } from "@tinymce/tinymce-react";
+import { ToggleButton } from "@mui/material";
+import emailjs from '@emailjs/browser';
+import type { FormInstance } from "antd/es/form";
+import { Link } from 'react-router-dom';
 
-import { Empty, Select, Spin } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
-
-interface FormValue {
+type FormValue = {
   experience: number[];
   jobRole: string;
+  
   location: string[];
   skills: string[];
 }
+type ToggleItem = {
+  url: string;
+}
 
 const FilterPage = () => {
+  let { state } = useLocation();
+  // if (!state) {
+  //   state = {
+  //     jobRole: "Java",
+  //   };
+  // }
   const [enterResponse, setResponse] = useState<any[]>([]);
   const [getLoader, setLoader] = useState<boolean>(false);
+  const [jobRoleValue, setJobRole] = useState<string>();
+  const [jobId, setJobId] = useState<string>();
+
 
   const handleSubmit = async (value: FormValue) => {
     setLoader(true);
+   // console.log('job1111',value.jobRole)
+    setJobRole(value.jobRole)
     const jwtToken: any = Cookies.get("atsUser");
     const jwtDecode: any = jwt_Decode(jwtToken);
     const id = uuid();
+    setJobId(id)
     const skilsString = await value.skills.join(",");
     const locationString = await value.location.join(",");
-    const url = `https://intranet.accionlabs.com/atsbackend/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+    //const url = `${Constants.filterSubmitUrl}?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+
+    //const url = `${Constants.filterSubmitUrl}?job_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+
+     const url = `https://intranet.accionlabs.com/atsbackend/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+    //const url = `https://192.168.168.50:8000/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
 
     try {
       const response = await fetch(url);
@@ -40,6 +73,29 @@ const FilterPage = () => {
       alert(error);
     }
   };
+
+  //BenchProfile
+  const [toggle, setToggle] = useState([])
+  const toggleBench = async (value: FormValue) => {
+    const jwtToken: any = Cookies.get("atsUser");
+    const jwtDecode: any = jwt_Decode(jwtToken);
+    const id = uuid();
+    const skilsString = await value.skills.join(",");
+    const locationString = await value.location.join(",");
+    fetch(`${Constants.benchProfile}?job_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`
+      , {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        setToggle(response);
+      });
+  }
 
   const toggleSwitch = (id: any) => {
     const newResponse = [...enterResponse];
@@ -111,11 +167,63 @@ const FilterPage = () => {
 
   const antIcon = <LoadingOutlined style={{ fontSize: 60 }} spin />;
 
+  // pagination for data
+  const [page, setPage] = useState(1);
+  const [pageDetails, setPageDetails] = useState({});
+  const handlePage = () => {
+    //setPage(value);
+  }
+
+  const clearEmail = () => {
+    window.location.reload();
+  }
+
+  const id = uuid();
+  // Download All Report
+  // const handleDownload = () => {
+  //   const id = uuid();
+  //   const url=`https://192.168.168.50:8000/download-report?job_id=${id}`
+  //   fetch(
+  //     url,
+  //   )
+  // }; 
+
+  const sendEmail  = (e: FormEvent) => {
+    e.preventDefault();
+    const jwtToken: any = Cookies.get("atsUser");
+    const jwtDecode: any = jwt_Decode(jwtToken);
+   
+    fetch(`${Constants.massEmail}?job_id=${jobId}&recipient=${jwtDecode.email}&job_role=${jobRoleValue}`
+      , {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        setToggle(response.url);
+        window.open(response.url, '_blank')
+      });
+  };
+
+  // const handleOpenUrl = () => {
+  //   const url = `${toggle}`
+  //   window.open(url, '_blank')
+  // }
+
   return (
     <Layout>
       <Navbar />
       <Layout>
-        <Sidenav handleSubmit={handleSubmit} />
+        <Sidenav
+          // { 
+          //   toggle===true &&
+          handleSubmit={handleSubmit}
+        // }
+        />
         {getLoader ? (
           <div className="spinner-align">
             <Spin indicator={antIcon} />
@@ -133,15 +241,34 @@ const FilterPage = () => {
                     minHeight: "77vh",
                   }}
                 >
+
+                  {/* download all report */}
+                  <button style={{ minHeight: "1px", marginTop: "10px", background: "#ffffff", marginLeft: "6%", position: "relative", fontWeight: "bold", borderRadius: "5px", border: "none", height: "30px" }}>
+                    <a
+                      className="name"
+                      //  onClick={handleDownload}
+                      // href={`https://192.168.168.50:8000/download-report?job_id=${id}`}
+                      href={`${Constants.downloadReportUrl}?job_id=${id}`}
+                    >
+                      <DownloadOutlined />&nbsp;
+                      Download Report
+                    </a></button>
+
+                  <Button
+                    onClick={sendEmail} 
+                    style={{ position: "relative", marginTop: "10px", marginLeft: "4%", height: "30px" }}
+                  >
+                    <SendOutlined />&nbsp;
+                    Send Email</Button>&nbsp;&nbsp;
                   <Select
                     placeholder="Sort by Experience and Score"
                     options={sortOption}
                     onChange={onChangeSort}
                     style={{
                       minWidth: "200px",
-                      marginTop: "15px",
-                      marginRight: "15px",
-                      marginLeft: "67%",
+                      marginTop: "10px",
+                      position: "relative",
+                      marginLeft: "3%",
                     }}
                   />
                   <ul className="list-container">
@@ -154,6 +281,12 @@ const FilterPage = () => {
                     ))}
                   </ul>
                 </Content>
+                <div className="d-sm-flex text-center justify-content-between align-item-center">
+                  <div style={{ position: "absolute", marginLeft: "50px" }}>
+                    Page:{page}
+                  </div>
+                </div>
+                <Pagination style={{ marginLeft: "50%", display: "block" }} count={10} page={page} onChange={handlePage} />
               </Layout>
             ) : (
               <Empty
@@ -172,5 +305,4 @@ const FilterPage = () => {
     </Layout>
   );
 };
-
 export default FilterPage;

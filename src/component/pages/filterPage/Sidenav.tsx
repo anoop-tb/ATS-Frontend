@@ -1,14 +1,19 @@
 import React, { useState } from "react";
-import { Form, Select, SelectProps, Slider, theme, Button } from "antd";
+import { Form, Select, SelectProps, Slider, theme, Button, Tooltip, Space,Switch } from "antd";
 import Sider from "antd/es/layout/Sider";
 import {
   LineChartOutlined,
   PictureOutlined,
   UserOutlined,
   FireOutlined,
+  FileSearchOutlined
 } from "@ant-design/icons";
 import type { FormInstance } from "antd/es/form";
 import { ValidateErrorEntity } from "rc-field-form/es/interface";
+import { click } from "@testing-library/user-event/dist/click";
+import { height } from "@mui/system";
+import { Box } from "@mui/material";
+import type { SliderMarks } from "antd/es/slider";
 
 interface FormValue {
   jobRole: string;
@@ -846,7 +851,7 @@ skillsList.forEach((skill) => {
     value: skill,
   });
 });
-
+//const [active, setActive] = useState(true);
 const Sidenav = ({ handleSubmit }: props) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [form] = Form.useForm();
@@ -858,10 +863,27 @@ const Sidenav = ({ handleSubmit }: props) => {
 
   const onReset = () => {
     formRef.current!.resetFields();
+    setIsShown(false);
   };
   const onFinish = (value: FormValue) => {
     handleSubmit(value);
 
+    setIsShown(current => !current);
+    // if(){
+    // let conter = document.getElementById()
+
+    let myContainer = document.getElementById('colorChanged') as HTMLInputElement;
+    // myContainer.innerHTML = "Green(<=1month)";
+    myContainer.innerHTML = "";
+
+    let myContainer1 = document.getElementById('colorChanged1') as HTMLInputElement;
+    // myContainer1.innerHTML = "Yellow(Between 2-5 months)";
+    myContainer1.innerHTML = "";
+
+    let myContainer2 = document.getElementById('colorChanged2') as HTMLInputElement;
+    // myContainer2.innerHTML = "Orange(>=6months)";
+    myContainer2.innerHTML = "";
+    // }
     // formRef.current!.resetFields();
   };
 
@@ -870,6 +892,37 @@ const Sidenav = ({ handleSubmit }: props) => {
   };
   const onFinishFailed = (errorInfo: ValidateErrorEntity) => {
     setIsButtonDisabled(true);
+  };
+
+  //   const colorDisplay=()=> {
+  //     // document.getElementById("binaryPrint").innerHTML = "test!";
+  //     document.getElementById('colorChanged')!.click();
+  //    //  document.getElementById("colorChanged").click = handleSubmit()
+  // }
+
+  const [isShown, setIsShown] = useState(false);
+  const onChange = (checked: boolean) => {
+    console.log(`switch to ${checked}`);
+  };
+  const cardColor: SliderMarks = {
+    0: {
+        style: {
+          color: 'grey',
+        },
+        label: <p>0 Month</p>,
+      },
+    27: {
+      style: {
+        color: 'grey',
+      },
+      label: <p>1 Month</p>,
+    },
+    57: {
+      style: {
+        color: 'grey',
+      },
+      label: <p>6 Months</p>,
+    },
   };
 
   return (
@@ -886,6 +939,7 @@ const Sidenav = ({ handleSubmit }: props) => {
       width={"32%"}
     >
       <Form
+      style={{overflow:"auto",height:"500px"}}
         form={form}
         initialValues={{ remember: true }}
         ref={formRef}
@@ -900,7 +954,7 @@ const Sidenav = ({ handleSubmit }: props) => {
         </p>
         <Form.Item name="jobRole" rules={[{ required: true }]}>
           <Select
-            showSearch
+            
             allowClear
             style={{ width: "85%", marginLeft: "35px", marginRight: "10px" }}
             placeholder="Please select"
@@ -914,11 +968,12 @@ const Sidenav = ({ handleSubmit }: props) => {
         </p>
         <Form.Item name="location" rules={[{ required: true }]}>
           <Select
-            mode="tags"
+             mode="tags"
+            //showSearch
             allowClear
             style={{ width: "85%", marginLeft: "35px", marginRight: "10px" }}
             placeholder="Please select"
-            options={locationOptions}
+             options={locationOptions}
           />
         </Form.Item>
 
@@ -949,6 +1004,13 @@ const Sidenav = ({ handleSubmit }: props) => {
             style={{ width: "335px", marginLeft: "38px" }}
           />
         </Form.Item>
+        <p style={{ marginTop: "20px", marginLeft: "10px" }}>
+          <FileSearchOutlined className="site-form-item-icon" />
+          <span style={{ marginLeft: "5px" }}>Internal Data</span>
+        </p>
+        <Form name="bench">
+        <Switch id="benchProfile" onChange={onChange} style={{marginLeft:"35px"}}/>
+        </Form>
         <Form.Item style={{ float: "right", marginRight: "15px" }}>
           <Button
             type="primary"
@@ -962,10 +1024,30 @@ const Sidenav = ({ handleSubmit }: props) => {
           <Button htmlType="button" onClick={onReset}>
             Reset
           </Button>
+
+          {/* Card Color  show onClick Submit */}
+       
+          {isShown &&
+          <div style={{marginLeft:"-190px",marginTop:"15px"}}>
+          <span>Resume Last Updated</span>
+    <Slider   disabled className="clr" marks={cardColor}/></div>}<br/>
+
+    {/* <div style={{ marginTop: "50px", marginLeft: "-50px" }}>
+            {isShown &&
+              <Tooltip placement="topRight" title="Less than 1 month data" color="#d9ead3" key="#d9ead3">
+                <Box id="colorChanged" style={{ width: "15px", height: "15px", background: "#d9ead3", display: "inline-block" }} /></Tooltip>
+            }&nbsp;&nbsp;
+            {isShown &&
+              <Tooltip title="Between 1-6 months data" color="#fff2cc" key="#fff2cc">
+                <Box id="colorChanged1" style={{ width: "15px", height: "15px", background: "#fff2cc", display: "inline-block" }} /></Tooltip>}&nbsp;&nbsp;
+            {isShown &&
+              <Tooltip placement="topLeft" title="More than 6 months data" color="#f9cb9c" key="#f9cb9c">
+                <Box id="colorChanged1" style={{ width: "15px", height: "15px", background: "#f9cb9c", display: "inline-block" }} /></Tooltip>
+            }
+          </div> */}
         </Form.Item>
       </Form>
     </Sider>
   );
 };
-
 export default Sidenav;
