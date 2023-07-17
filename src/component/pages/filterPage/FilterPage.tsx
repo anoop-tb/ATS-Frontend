@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,FormEvent } from "react";
 import Layout, { Content } from "antd/es/layout/layout";
 import Navbar from "./Navbar";
 import Sidenav from "./Sidenav";
@@ -7,12 +7,12 @@ import uuid from "react-uuid";
 import jwt_Decode from "jwt-decode";
 import Cookies from "js-cookie";
 import * as Constants from '../../Constants';
-import { Empty, Select, Spin } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import { Empty, Select, Spin, Form, Button} from "antd";
+import { DownloadOutlined, SendOutlined, PaperClipOutlined, LoadingOutlined } from "@ant-design/icons";
 
-interface FormValue {
+type FormValue = {
   experience: number[];
-  jobRole: string;
+  jobRole: string;  
   location: string[];
   skills: string[];
 }
@@ -23,9 +23,11 @@ const FilterPage = () => {
 
   const handleSubmit = async (value: FormValue) => {
     setLoader(true);
+    setJobRole(value.jobRole)
     const jwtToken: any = Cookies.get("atsUser");
     const jwtDecode: any = jwt_Decode(jwtToken);
     const id = uuid();
+    setJobId(id)
     const skilsString = await value.skills.join(",");
     const locationString = await value.location.join(",");
    
@@ -116,6 +118,31 @@ const FilterPage = () => {
   };
 
   const antIcon = <LoadingOutlined style={{ fontSize: 60 }} spin />;
+  const id = uuid();
+   //Mass Email
+   const [jobRoleValue, setJobRole] = useState<string>();
+   const [jobId, setJobId] = useState<string>();
+   const [emailMass, setEmailMass] = useState([])
+   const sendEmail  = (e: FormEvent) => {
+     e.preventDefault();
+     const jwtToken: any = Cookies.get("atsUser");
+     const jwtDecode: any = jwt_Decode(jwtToken);
+    
+     fetch(`${Constants.massEmail}?job_id=${jobId}&recipient=${jwtDecode.email}&job_role=${jobRoleValue}`
+       , {
+         method: "GET",
+         headers: {
+           'Content-Type': 'application/json',
+           'Accept': 'application/json'
+         },
+       }
+     )
+       .then((res) => res.json())
+       .then((response) => {
+         setEmailMass(response.url);
+         window.open(response.url, '_blank')
+       });
+   };
 
   return (
     <Layout>
@@ -139,15 +166,34 @@ const FilterPage = () => {
                     minHeight: "77vh",
                   }}
                 >
+                      {/* download all report */}
+                      <button style={{ minHeight: "1px", marginTop: "10px", background: "#ffffff", marginLeft: "6%", position: "relative", fontWeight: "bold", borderRadius: "5px", border: "none", height: "30px" }}>
+                    <a
+                      className="name"
+                      //  onClick={handleDownload}
+                      // href={`https://192.168.168.50:8000/download-report?job_id=${id}`}
+                      href={`${Constants.downloadReportUrl}?job_id=${id}`}
+                    >
+                      <DownloadOutlined />&nbsp;
+                      Download Report
+                    </a></button>
+
+                 {/* Mass Email */}
+                  <Button
+                    onClick={sendEmail} 
+                    style={{ position: "relative", marginTop: "10px", marginLeft: "4%", height: "30px" }}
+                  >
+                    <SendOutlined />&nbsp;
+                    Send Email</Button>&nbsp;&nbsp;
                   <Select
                     placeholder="Sort by Experience and Score"
                     options={sortOption}
                     onChange={onChangeSort}
                     style={{
                       minWidth: "200px",
-                      marginTop: "15px",
-                      marginRight: "15px",
-                      marginLeft: "67%",
+                      marginTop: "10px",
+                      position: "relative",
+                      marginLeft: "3%",
                     }}
                   />
                   <ul className="list-container">
