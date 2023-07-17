@@ -70,9 +70,6 @@
     
 }
 
-
-
-
 .list-of-skills{
     width: 100%;
     display: flex;
@@ -110,3 +107,68 @@
   margin: 20px; 
   margin-left: 30%;
 }
+
+/* popup modal */
+
+.mail-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.2);
+  }
+  
+  .form-grouph {
+    margin-bottom: 10px;
+  }
+  
+  .form-grouph label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .form-grouph input,
+  .form-grouph textarea {
+    display: block;
+    width: 98%;
+    border: 1px solid gray;
+    border-radius: 3px;
+    padding: 5px;
+    font-size: 16px;
+  }
+  
+  .button-grouph {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  
+  .button-grouph button {
+    margin-left: 10px;
+    padding: 5px 10px
+  }  
+  
+
+  .clr {
+    position: absolute;
+    height: 12px;
+    width: 270px;
+    background: linear-gradient(
+      to right,
+      hsl(104, 35%, 87%),
+      hsl(104, 35%, 87%),
+      hsl(45, 100%, 90%),
+      hsl(45, 100%, 90%),
+      hsl(30, 89%, 79%),
+      hsl(30, 89%, 79%),
+      hsl(30, 89%, 79%)
+    );
+    border-radius: 20px;
+  }
+  

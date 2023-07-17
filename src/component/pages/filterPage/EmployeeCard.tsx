@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./style.css";
 import { Button, Divider } from "antd";
 import {
@@ -6,7 +6,7 @@ import {
   UserOutlined,
   PhoneOutlined,
 } from "@ant-design/icons";
-
+import * as Constants from '../../Constants';
 interface props {
   cardValue: any;
   toggleSwitch: any;
@@ -16,6 +16,8 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
   const {
     name,
     email,
+    ta_email,
+    file_created,
     phone,
     location,
     experience,
@@ -39,15 +41,43 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
     skillArrayPass = skillsArray.slice(0, 4);
   }
 
+  // card on 3 color divided
+
+  let bgColor;
+
+  const cardDated = (file_created: Date, currentDate: Date) => {
+
+    return currentDate.getMonth() - file_created.getMonth() +
+      (12 * (currentDate.getFullYear() - file_created.getFullYear()))
+  }
+  var monthCount = cardDated(new Date(file_created), new Date())
+  console.log(monthCount)
+  // alert(monthCount)
+
+  if (monthCount <= 1) {
+    bgColor = "#d9ead3"  //green
+    // #d9ead3
+  }
+  else if (monthCount >= 2 && monthCount <= 5) {
+    bgColor = "#fff2cc"  //yellow
+    // #fff2cc
+  }
+  else if (monthCount >= 6) {
+    bgColor = "#f9cb9c"   //orange
+    //#f9cb9c
+  }
+ 
   return (
-    <li className="form-container" style={{ marginTop: "40px" }}>
+    // bgColor- colour code
+    <li id="monthed" className="form-container" style={{ marginTop: "40px",background: bgColor}}>
       <div className="header-container">
         <p className="name">
           <strong>{name}</strong>
         </p>
         <a
           className="name"
-          href={`http://192.168.168.50:8000/profile/${filenames}`}
+          //   href={`http://192.168.168.50:8000/profile/${filenames}`}
+          href={`${Constants.fileDownloadUrl}/${filenames}`}
         >
           <strong>
             <DownloadOutlined className="site-form-item-icon" />
@@ -87,6 +117,20 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
         <p className="heading">Experience :</p>
         <p className="para match-score">{experience}</p>
       </div>
+
+      {/* Created file date */}
+      <div className="mail-container">
+        <p className="heading">Created File :</p>
+        <p className="para match-score">{new Date(
+          file_created
+        ).toLocaleDateString('en-GB')}
+          {" "}
+          {new Date(
+            file_created
+          ).toLocaleTimeString()}
+        </p>
+
+      </div>
       <p className="heading">Skills :</p>
       <ul className="list-of-skills">
         {skillArrayPass.map((eachSkill) => (
@@ -94,7 +138,7 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
         ))}
       </ul>
       <Button
-        style={{ marginTop: "10px" }}
+        style={{ marginTop: "10px", background: bgColor, border: "none" }}
         onClick={() => {
           toggleSwitch(phone);
         }}

@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import type { FormInstance } from "antd/es/form";
 import { ValidateErrorEntity } from "rc-field-form/es/interface";
+import type { SliderMarks } from "antd/es/slider";
 
 interface FormValue {
   jobRole: string;
@@ -858,9 +859,26 @@ const Sidenav = ({ handleSubmit }: props) => {
 
   const onReset = () => {
     formRef.current!.resetFields();
+    //colour code
+    setIsShown(false);
   };
   const onFinish = (value: FormValue) => {
     handleSubmit(value);
+
+    // colour code
+    setIsShown(current => !current);
+
+    let myContainer = document.getElementById('colorChanged') as HTMLInputElement;
+    // myContainer.innerHTML = "Green(<=1month)";
+    myContainer.innerHTML = "";
+
+    let myContainer1 = document.getElementById('colorChanged1') as HTMLInputElement;
+    // myContainer1.innerHTML = "Yellow(Between 2-5 months)";
+    myContainer1.innerHTML = "";
+
+    let myContainer2 = document.getElementById('colorChanged2') as HTMLInputElement;
+    // myContainer2.innerHTML = "Orange(>=6months)";
+    myContainer2.innerHTML = "";
 
     // formRef.current!.resetFields();
   };
@@ -870,6 +888,28 @@ const Sidenav = ({ handleSubmit }: props) => {
   };
   const onFinishFailed = (errorInfo: ValidateErrorEntity) => {
     setIsButtonDisabled(true);
+  };
+
+  const [isShown, setIsShown] = useState(false);
+  const cardColor: SliderMarks = {
+    0: {
+      style: {
+        color: 'grey',
+      },
+      label: <p>0 Month</p>,
+    },
+    27: {
+      style: {
+        color: 'grey',
+      },
+      label: <p>1 Month</p>,
+    },
+    57: {
+      style: {
+        color: 'grey',
+      },
+      label: <p>6 Months</p>,
+    },
   };
 
   return (
@@ -962,6 +1002,12 @@ const Sidenav = ({ handleSubmit }: props) => {
           <Button htmlType="button" onClick={onReset}>
             Reset
           </Button>
+
+          {/* Card Color  show onClick Submit */}
+          {isShown &&
+            <div style={{ marginLeft: "-190px", marginTop: "15px" }}>
+              <span>Resume Last Updated</span>
+              <Slider disabled className="clr" marks={cardColor} /></div>}<br />
         </Form.Item>
       </Form>
     </Sider>

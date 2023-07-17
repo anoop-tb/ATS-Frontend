@@ -6,7 +6,7 @@ import EmployeeCard from "./EmployeeCard";
 import uuid from "react-uuid";
 import jwt_Decode from "jwt-decode";
 import Cookies from "js-cookie";
-
+import * as Constants from '../../Constants';
 import { Empty, Select, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 
@@ -28,8 +28,14 @@ const FilterPage = () => {
     const id = uuid();
     const skilsString = await value.skills.join(",");
     const locationString = await value.location.join(",");
-    const url = `https://intranet.accionlabs.com/atsbackend/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+   
+   // const url = `https://intranet.accionlabs.com/atsbackend/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
 
+     // //Local API
+    const url = `${Constants.filterSubmitUrl}?job_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+   
+    //Live Api
+    //const url = `${Constants.URL}/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
     try {
       const response = await fetch(url);
       const json = await response.json();
