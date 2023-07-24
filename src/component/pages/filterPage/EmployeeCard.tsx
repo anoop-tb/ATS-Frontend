@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import "./style.css";
 import { Button, Divider } from "antd";
 import {
@@ -7,12 +7,19 @@ import {
   PhoneOutlined,
 } from "@ant-design/icons";
 import * as Constants from '../../Constants';
+
 interface props {
   cardValue: any;
   toggleSwitch: any;
 }
+type FormValue = {
+  toggleOn: boolean;
+}
 
 const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
+  console.log('check', cardValue)
+  console.log('check111')
+  const { state } = useLocation();
   const {
     name,
     email,
@@ -25,51 +32,60 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
     match_score,
     skill_status,
     filenames,
+    toggleOn,
   } = cardValue;
 
   let skillsArray;
-
   let skillArrayPass: any[];
 
   if (skills != null) {
     skillsArray = skills.split(",");
   }
-
   if (skill_status) {
     skillArrayPass = skillsArray;
   } else {
     skillArrayPass = skillsArray.slice(0, 4);
   }
 
-  // card on 3 color divided
-
+  // External color divided
   let bgColor;
-
   const cardDated = (file_created: Date, currentDate: Date) => {
-
     return currentDate.getMonth() - file_created.getMonth() +
       (12 * (currentDate.getFullYear() - file_created.getFullYear()))
   }
   var monthCount = cardDated(new Date(file_created), new Date())
-  console.log(monthCount)
-  // alert(monthCount)
+  //console.log(monthCount)
 
   if (monthCount <= 1) {
     bgColor = "#d9ead3"  //green
-    // #d9ead3
   }
   else if (monthCount >= 2 && monthCount <= 5) {
     bgColor = "#fff2cc"  //yellow
-    // #fff2cc
   }
   else if (monthCount >= 6) {
     bgColor = "#f9cb9c"   //orange
-    //#f9cb9c
   }
- 
+
+  // Internal color coding
+  let internalColor;
+  let today: string = new Date().toISOString().slice(0, 10);
+  const startDate = new Date(file_created).toLocaleDateString('en-CA')
+  const endDate: string = today;
+  const diffInMs: number = new Date(endDate).getTime() - new Date(startDate).getTime();
+  const diffInDays: number = diffInMs / (1000 * 60 * 60 * 24);
+  //console.log(diffInDays);
+  if (diffInDays && diffInDays <= 21) {
+    internalColor = "#d9ead3"; // green
+  } else if (diffInDays && diffInDays >= 22 && diffInDays <= 42) {
+    internalColor = "#fff2cc"; // yellow
+  } else if (diffInDays && diffInDays >= 43) {
+    internalColor = "#f9cb9c"; // orange
+  }
+
   return (
-    // bgColor- colour code
-    <li id="monthed" className="form-container" style={{ marginTop: "40px",background: bgColor}}>
+    // bgColor- external colour code, internalColour- internal bench colour
+    // {/* background: experience==='1.2'?'red':'black' */}
+    <li id="monthed" className="form-container" style={{ marginTop: "40px", background: !toggleOn === true ? internalColor : bgColor }}>
       <div className="header-container">
         <p className="name">
           <strong>{name}</strong>
@@ -138,16 +154,15 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
         ))}
       </ul>
       <Button
-        style={{ marginTop: "10px", background: bgColor, border: "none" }}
+        style={{ marginTop: "10px", background: !toggleOn === true ? internalColor : bgColor, border: "none" }}
         onClick={() => {
           toggleSwitch(phone);
         }}
         block
       >
-        View More
+        {skill_status ? 'View Less' : 'View More'}
       </Button>
     </li>
   );
 };
-
 export default EmployeeCard;

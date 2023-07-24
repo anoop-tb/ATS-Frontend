@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Form, Select, SelectProps, Slider, theme, Button } from "antd";
+import { Form, Select, SelectProps, Slider, theme, Button, Switch } from "antd";
 import Sider from "antd/es/layout/Sider";
+import { useLocation } from "react-router-dom";
 import {
   LineChartOutlined,
   PictureOutlined,
   UserOutlined,
   FireOutlined,
+  FileSearchOutlined
 } from "@ant-design/icons";
 import type { FormInstance } from "antd/es/form";
 import { ValidateErrorEntity } from "rc-field-form/es/interface";
@@ -16,6 +18,7 @@ interface FormValue {
   location: string[];
   skills: string[];
   experience: number[];
+  toggleOn: boolean;
 }
 
 interface props {
@@ -849,6 +852,8 @@ skillsList.forEach((skill) => {
 });
 
 const Sidenav = ({ handleSubmit }: props) => {
+  const { state } = useLocation();
+  const location = useLocation();
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [form] = Form.useForm();
   const {
@@ -882,14 +887,12 @@ const Sidenav = ({ handleSubmit }: props) => {
 
     // formRef.current!.resetFields();
   };
-
-  const onValuesChange = async (values: any) => {
+  const onValuesChange = async (values: any, valData: FormValue) => {
     setIsButtonDisabled(!form.isFieldsTouched(true));
   };
   const onFinishFailed = (errorInfo: ValidateErrorEntity) => {
     setIsButtonDisabled(true);
   };
-
   const [isShown, setIsShown] = useState(false);
   const cardColor: SliderMarks = {
     0: {
@@ -911,12 +914,35 @@ const Sidenav = ({ handleSubmit }: props) => {
       label: <p>6 Months</p>,
     },
   };
+  const cardIntColor: SliderMarks = {
+    0: {
+      style: {
+        color: 'grey',
+      },
+      label: <p>0 Week</p>,
+    },
+    27: {
+      style: {
+        color: 'grey',
+      },
+      label: <p>3 Weeks</p>,
+    },
+    57: {
+      style: {
+        color: 'grey',
+      },
+      label: <p>6 Weeks</p>,
+    },
+  };
+  //toggle
+  const [currentValue, setCurrentValue] = useState({})
 
   return (
     <Sider
       style={{
-        overflow: "auto",
-        height: "100vh",
+        overflow: 'auto',
+        // height: "100vh",
+        height: '500px',
         position: "fixed",
         left: 0,
         top: 60,
@@ -989,12 +1015,25 @@ const Sidenav = ({ handleSubmit }: props) => {
             style={{ width: "335px", marginLeft: "38px" }}
           />
         </Form.Item>
+        <p style={{ marginTop: "20px", marginLeft: "10px" }}>
+          <FileSearchOutlined className="site-form-item-icon" />
+          <span style={{ marginLeft: "5px" }}>Internal Data</span>
+        </p>
+        <Form.Item name="toggleOn" rules={[{ required: false }]}>
+          <Switch id="benchProfile"
+            //disabled={(form.isFieldsTouched(true) !== isButtonDisabled)}
+            onChange={(value) => {
+              setCurrentValue(value)
+            }}
+            style={{ marginLeft: "35px" }} />
+        </Form.Item>
+
         <Form.Item style={{ float: "right", marginRight: "15px" }}>
           <Button
             type="primary"
             htmlType="submit"
             style={{ marginRight: "10px" }}
-            disabled={isButtonDisabled}
+          // disabled={isButtonDisabled}
           >
             Submit
           </Button>
@@ -1007,11 +1046,10 @@ const Sidenav = ({ handleSubmit }: props) => {
           {isShown &&
             <div style={{ marginLeft: "-190px", marginTop: "15px" }}>
               <span>Resume Last Updated</span>
-              <Slider disabled className="clr" marks={cardColor} /></div>}<br />
+              <Slider disabled className="clr" marks={currentValue === true ? cardIntColor : cardColor} /></div>}<br />
         </Form.Item>
       </Form>
     </Sider>
   );
 };
-
 export default Sidenav;

@@ -1,4 +1,4 @@
-import { useState,FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import Layout, { Content } from "antd/es/layout/layout";
 import Navbar from "./Navbar";
 import Sidenav from "./Sidenav";
@@ -7,20 +7,27 @@ import uuid from "react-uuid";
 import jwt_Decode from "jwt-decode";
 import Cookies from "js-cookie";
 import * as Constants from '../../Constants';
-import { Empty, Select, Spin, Form, Button} from "antd";
-import { DownloadOutlined, SendOutlined, PaperClipOutlined, LoadingOutlined } from "@ant-design/icons";
+import { Empty, Select, Spin, Button } from "antd";
+import { DownloadOutlined, SendOutlined, LoadingOutlined } from "@ant-design/icons";
+import { ToastContainer } from "react-toastify";
 
 type FormValue = {
   experience: number[];
-  jobRole: string;  
+  jobRole: string;
   location: string[];
   skills: string[];
+  toggleOn: boolean;
 }
-
+type ToggleItem = {
+  url: string;
+}
+interface Item {
+  id: number;
+  name: string;
+}
 const FilterPage = () => {
   const [enterResponse, setResponse] = useState<any[]>([]);
   const [getLoader, setLoader] = useState<boolean>(false);
-
   const handleSubmit = async (value: FormValue) => {
     setLoader(true);
     setJobRole(value.jobRole)
@@ -30,26 +37,41 @@ const FilterPage = () => {
     setJobId(id)
     const skilsString = await value.skills.join(",");
     const locationString = await value.location.join(",");
-   
-   // const url = `https://intranet.accionlabs.com/atsbackend/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
 
-     // //Local API
-   // const url = `${Constants.filterSubmitUrl}?job_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
-   
-    //Live Api
-    const url = `${Constants.URL}/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
-    try {
-      const response = await fetch(url);
-      const json = await response.json();
-      setResponse(json);
-      setLoader(false);
-    } catch (error) {
-      setLoader(false);
-      alert(error);
+    if (!value.toggleOn === true) {
+      //External data profile
+      // const url = `https://intranet.accionlabs.com/atsbackend/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+
+      //Live Api
+      //const url = `${Constants.URL}/candidates?search_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+
+      //Local API
+      const url = `${Constants.filterSubmitUrl}?job_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+      try {
+        const response = await fetch(url);
+        const json = await response.json();
+        setResponse(json.candidates);
+        setLoader(false);
+      } catch (error) {
+        setLoader(false);
+        alert(error);
+      }
+    }
+    else {
+      //BenchProfile 
+      const url = `${Constants.benchProfile}?job_id=${id}&email_id=${jwtDecode.email}&skills=${skilsString}&exp_l=${value.experience[0]}&exp_h=${value.experience[1]}&location=${locationString}&job_title=${value.jobRole}`;
+      try {
+        const response = await fetch(url);
+        const json = await response.json();
+        setResponse(json);
+        setLoader(false);
+      } catch (error) {
+        setLoader(false);
+        alert(error);
+      }
     }
   };
-
-  const toggleSwitch = (id: any) => {
+  const toggleSwitch = (id: any, toggleOn: FormValue) => {
     const newResponse = [...enterResponse];
     newResponse.forEach((each) => {
       if (each.phone === id) {
@@ -58,7 +80,6 @@ const FilterPage = () => {
     });
     setResponse(newResponse);
   };
-
   const sortListByExperience = () => {
     const numAscending = [...enterResponse].sort(
       (a, b) => a.experience - b.experience
@@ -71,7 +92,6 @@ const FilterPage = () => {
     );
     setResponse(numdescending);
   };
-
   const sortByScore = () => {
     const numAscending = [...enterResponse].sort(
       (a, b) => a.match_score - b.match_score
@@ -84,7 +104,6 @@ const FilterPage = () => {
     );
     setResponse(numdescending);
   };
-
   const sortOption = [
     {
       value: "expAsc",
@@ -103,7 +122,6 @@ const FilterPage = () => {
       label: "Sort by Score Descending",
     },
   ];
-
   const onChangeSort = (value: string) => {
     switch (value) {
       case "expAsc":
@@ -116,39 +134,40 @@ const FilterPage = () => {
         return sortByScoreD();
     }
   };
-
   const antIcon = <LoadingOutlined style={{ fontSize: 60 }} spin />;
   const id = uuid();
-   //Mass Email
-   const [jobRoleValue, setJobRole] = useState<string>();
-   const [jobId, setJobId] = useState<string>();
-   const [emailMass, setEmailMass] = useState([])
-   const sendEmail  = (e: FormEvent) => {
-     e.preventDefault();
-     const jwtToken: any = Cookies.get("atsUser");
-     const jwtDecode: any = jwt_Decode(jwtToken);
-    
-     fetch(`${Constants.massEmail}?job_id=${jobId}&recipient=${jwtDecode.email}&job_role=${jobRoleValue}`
-       , {
-         method: "GET",
-         headers: {
-           'Content-Type': 'application/json',
-           'Accept': 'application/json'
-         },
-       }
-     )
-       .then((res) => res.json())
-       .then((response) => {
-         setEmailMass(response.url);
-         window.open(response.url, '_blank')
-       });
-   };
+  //Mass Email
+  const [jobRoleValue, setJobRole] = useState<string>();
+  const [jobId, setJobId] = useState<string>();
+  const [emailMass, setEmailMass] = useState([])
+  const sendEmail = (e: FormEvent) => {
+    e.preventDefault();
+    const jwtToken: any = Cookies.get("atsUser");
+    const jwtDecode: any = jwt_Decode(jwtToken);
+
+    fetch(`${Constants.massEmail}?job_id=${jobId}&recipient=${jwtDecode.email}&job_role=${jobRoleValue}`
+      , {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        setEmailMass(response.url);
+        window.open(response.url, '_blank')
+      });
+  };
 
   return (
     <Layout>
       <Navbar />
       <Layout>
-        <Sidenav handleSubmit={handleSubmit} />
+        <Sidenav
+          handleSubmit={handleSubmit}
+        />
         {getLoader ? (
           <div className="spinner-align">
             <Spin indicator={antIcon} />
@@ -166,8 +185,8 @@ const FilterPage = () => {
                     minHeight: "77vh",
                   }}
                 >
-                      {/* download all report */}
-                      <button style={{ minHeight: "1px", marginTop: "10px", background: "#ffffff", marginLeft: "6%", position: "relative", fontWeight: "bold", borderRadius: "5px", border: "none", height: "30px" }}>
+                  {/* download all report */}
+                  <button style={{ minHeight: "1px", marginTop: "10px", background: "#ffffff", marginLeft: "6%", position: "relative", fontWeight: "bold", borderRadius: "5px", border: "none", height: "30px" }}>
                     <a
                       className="name"
                       //  onClick={handleDownload}
@@ -178,9 +197,9 @@ const FilterPage = () => {
                       Download Report
                     </a></button>
 
-                 {/* Mass Email */}
+                  {/* Mass Email */}
                   <Button
-                    onClick={sendEmail} 
+                    onClick={sendEmail}
                     style={{ position: "relative", marginTop: "10px", marginLeft: "4%", height: "30px" }}
                   >
                     <SendOutlined />&nbsp;
@@ -220,9 +239,9 @@ const FilterPage = () => {
             )}
           </>
         )}
+        <ToastContainer />
       </Layout>
     </Layout>
   );
 };
-
 export default FilterPage;

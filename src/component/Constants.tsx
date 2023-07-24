@@ -1,5 +1,5 @@
-export const URL ="https://intranet.accionlabs.com/atsbackend"
-//export const URL ="https://192.168.168.50:8000"
+//export const URL ="https://intranet.accionlabs.com/atsbackend"
+export const URL ="https://192.168.168.50:8000"
 
 //Employee Card
 
