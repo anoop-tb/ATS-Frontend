@@ -50,7 +50,8 @@ const FilterPage = () => {
       try {
         const response = await fetch(url);
         const json = await response.json();
-        setResponse(json.candidates);
+        setResponse(json);
+        // setResponse(json.candidates);
         setLoader(false);
       } catch (error) {
         setLoader(false);
