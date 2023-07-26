@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import * as Constants from '../../Constants';
 import { Empty, Select, Spin, Button } from "antd";
 import { DownloadOutlined, SendOutlined, LoadingOutlined } from "@ant-design/icons";
-import { ToastContainer } from "react-toastify";
+// import { ToastContainer } from "react-toastify";
 
 type FormValue = {
   experience: number[];
@@ -240,7 +240,7 @@ const FilterPage = () => {
             )}
           </>
         )}
-        <ToastContainer />
+        {/* <ToastContainer /> */}
       </Layout>
     </Layout>
   );
