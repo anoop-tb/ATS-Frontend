@@ -17,8 +17,8 @@ type FormValue = {
 }
 
 const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
-  console.log('check', cardValue)
-  console.log('check111')
+ // console.log('check', cardValue)
+  //console.log('check111')
   const { state } = useLocation();
   const {
     name,

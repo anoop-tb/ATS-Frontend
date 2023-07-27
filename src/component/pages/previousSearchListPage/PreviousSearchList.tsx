@@ -48,8 +48,8 @@ function PreviousSearchList() {
       const json = await response.json();
       setSearchList(json);
     } catch (error) {
-      console.log("error");
-      alert(error);
+     // console.log("error");
+     // alert(error);
     }
   };
 
@@ -61,19 +61,19 @@ function PreviousSearchList() {
       const json = await response.json();
       getPreviousSearchList();
     } catch (error) {
-      console.log("error");
-      alert(error);
+     // console.log("error");
+     // alert(error);
     }
   };
 
   const handleDelete = (key: React.Key) => {
     deletePreviousSearchList(key);
 
-    console.log(key);
+   // console.log(key);
   };
 
   const handleView = (key: React.Key) => {
-    console.log(key);
+    //console.log(key);
     let link = `/previoussearchlist/${key}`;
     return navigate(link);
   };

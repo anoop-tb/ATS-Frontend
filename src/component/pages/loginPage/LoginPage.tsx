@@ -9,8 +9,8 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
-    console.log(enterJwttoken);
-    console.log(!Object.entries(enterJwttoken).length);
+    //console.log(enterJwttoken);
+    //console.log(!Object.entries(enterJwttoken).length);
     if (Object.entries(enterJwttoken).length) {
       return navigate("/");
     }
@@ -32,7 +32,7 @@ const LoginPage = () => {
             });
           }}
           onError={() => {
-            alert("Login Failed");
+           // alert("Login Failed");
           }}
           useOneTap
         />

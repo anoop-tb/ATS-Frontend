@@ -55,7 +55,7 @@ const FilterPage = () => {
         setLoader(false);
       } catch (error) {
         setLoader(false);
-        alert(error);
+      //  alert(error);
       }
     }
     else {
@@ -68,7 +68,7 @@ const FilterPage = () => {
         setLoader(false);
       } catch (error) {
         setLoader(false);
-        alert(error);
+     //   alert(error);
       }
     }
   };
@@ -240,7 +240,6 @@ const FilterPage = () => {
             )}
           </>
         )}
-        {/* <ToastContainer /> */}
       </Layout>
     </Layout>
   );

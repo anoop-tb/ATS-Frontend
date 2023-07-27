@@ -21,11 +21,11 @@ const EmployeeList =()=>{
         try{
             const response = await fetch(url);
             const json = await response.json();
-            console.log(json)
+         //   console.log(json)
             setEmployeeList(json)
         }catch(error){
-            console.log("error")
-            alert(error)
+           // console.log("error")
+          //  alert(error)
         }
     }
     const toggleSwitch = (id:React.Key) =>{
@@ -39,8 +39,8 @@ const EmployeeList =()=>{
         })
         setEmployeeList(newResponse)
       }
-    console.log("employeelist running")
-    console.log("employee",enterEmployeeList)
+    //console.log("employeelist running")
+    //console.log("employee",enterEmployeeList)
     return (
         <Layout>
             <Navbar/>

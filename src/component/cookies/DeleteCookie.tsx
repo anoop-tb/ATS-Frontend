@@ -6,7 +6,7 @@ interface props{
 }
 
 const DeleteCookie = ({cookiename }: any)=>{
-    console.log("delname",cookiename)
+   // console.log("delname",cookiename)
    return Cookie.remove(cookiename)
 }
 

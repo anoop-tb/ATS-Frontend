@@ -5,7 +5,7 @@ import Cookie from 'js-cookie';
 // }
 
 const GetCookie = ({cookiename}: any)=>{
-    console.log("jwtname",cookiename)
+   // console.log("jwtname",cookiename)
     return Cookie.get(cookiename)
 }
 
