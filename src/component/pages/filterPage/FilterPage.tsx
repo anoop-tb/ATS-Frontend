@@ -4,7 +4,7 @@ import Navbar from "./Navbar";
 import Sidenav from "./Sidenav";
 import EmployeeCard from "./EmployeeCard";
 import uuid from "react-uuid";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode  from "jwt-decode";
 import Cookies from "js-cookie";
 import * as Constants from '../../Constants';
 import { Empty, Select, Spin } from "antd";

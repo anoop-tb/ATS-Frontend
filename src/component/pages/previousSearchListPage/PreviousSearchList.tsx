@@ -8,7 +8,7 @@ import Navbar from "../filterPage/Navbar";
 
 import { useNavigate } from "react-router-dom";
 import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import Cookies from "js-cookie";
 import * as Constants from '../../Constants';
 
