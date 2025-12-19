@@ -1,36 +1,42 @@
 {
-  "name": "ats-sas",
+  "name": "ats_ui_ts",
   "version": "0.1.0",
-  "homepage": "https://sasmita-rout.github.io/existing-ats-sasm/",
   "private": true,
   "dependencies": {
-    "@ant-design/icons": "^6.1.0",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.0",
+    "@azure/msal-browser": "^4.7.0",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@fontsource/roboto": "^4.5.8",
+    "@mui/material": "^5.11.0",
+    "@mui/styled-engine-sc": "^5.11.0",
+    "@react-oauth/google": "^0.5.1",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@types/antd": "^1.0.0",
     "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.126",
-    "@types/react": "^19.2.5",
-    "@types/react-dom": "^19.2.3",
-    "antd": "^5.29.0",
-    "js-cookie": "^3.0.5",
-    "jwt-decode": "^4.0.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "react-router-dom": "^7.9.6",
+    "@types/node": "^16.18.9",
+    "@types/react": "^18.0.26",
+    "@types/react-dom": "^18.0.9",
+    "antd": "^5.0.7",
+    "bootstrap": "^5.2.3",
+    "js-cookie": "^3.0.1",
+    "jwt-decode": "^3.1.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.5.0",
     "react-scripts": "^5.0.1",
     "react-uuid": "^2.0.0",
-    "typescript": "^4.9.5",
+    "styled-components": "^5.3.6",
+    "typescript": "^4.9.4",
+    "uuid": "^9.0.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -51,8 +57,7 @@
     ]
   },
   "devDependencies": {
-    "@types/js-cookie": "^3.0.6",
-    "@types/jwt-decode": "^2.2.1",
-    "gh-pages": "^6.3.0"
+    "@types/js-cookie": "^3.0.2",
+    "gh-pages": "^4.0.0"
   }
 }
