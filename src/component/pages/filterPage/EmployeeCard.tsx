@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./style.css";
 import { Button, Divider } from "antd";
 import {
@@ -27,12 +27,11 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
     filenames,
   } = cardValue;
 
-  let skillsArray;
+  let skillsArray: string[] = [];
+  let skillArrayPass: string[] = [];
 
-  let skillArrayPass: any[];
-
-  if (skills != null) {
-    skillsArray = skills.split(",");
+  if (skills != null && typeof skills === "string") {
+    skillsArray = skills.split(",").map((s) => s.trim()).filter(Boolean);
   }
 
   if (skill_status) {
@@ -134,7 +133,7 @@ const EmployeeCard = ({ cardValue, toggleSwitch }: props) => {
       <p className="heading">Skills :</p>
       <ul className="list-of-skills">
         {skillArrayPass.map((eachSkill) => (
-          <li className="each-skill para-mail">{eachSkill}</li>
+          <li key={eachSkill} className="each-skill para-mail">{eachSkill}</li>
         ))}
       </ul>
       <Button

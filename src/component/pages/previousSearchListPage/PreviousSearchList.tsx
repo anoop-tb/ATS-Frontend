@@ -8,7 +8,7 @@ import Navbar from "../filterPage/Navbar";
 
 import { useNavigate } from "react-router-dom";
 import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
-import jwt_Decode from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import Cookies from "js-cookie";
 import * as Constants from '../../Constants';
 
@@ -38,11 +38,11 @@ function PreviousSearchList() {
 
   const getPreviousSearchList = async () => {
     const jwtToken: any = Cookies.get("atsUser");
-    const jwtDecode: any = jwt_Decode(jwtToken);
+    const jwtDecoded: any = jwtDecode(jwtToken);
     let id = "014d6842-b5a4-cd8d-8c30-a07991cf141b";
     // let url = `http://192.168.168.50:8000/matchcase_id?id=${id}`
     // let url = `https://intranet.accionlabs.com/atsbackend/email_match?email=${jwtDecode.email}`;
-    let url = `${Constants.getPreviousSearchListUrl}?email=${jwtDecode.email}`;
+    let url = `${Constants.getPreviousSearchListUrl}?email=${jwtDecoded.email}`;
     try {
       const response = await fetch(url);
       const json = await response.json();
